@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScreenId, UserProfile, MealSlot, FoodItem } from './types';
 import { initialUserProfile, initialMealSlots } from './data/mockData';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navigation } from './components/Navigation';
 import { DashboardView } from './components/DashboardView';
 import { NutritionLogView } from './components/NutritionLogView';
@@ -15,8 +16,13 @@ import { FoodScannerView } from './components/FoodScannerView';
 import { BmiHealthView } from './components/BmiHealthView';
 import { WorkoutTimerModal } from './components/WorkoutTimerModal';
 import { QuickAddModal } from './components/QuickAddModal';
+import { RegisterView } from './components/auth/RegisterView';
+import { LoginView } from './components/auth/LoginView';
+import { OnboardingView } from './components/auth/OnboardingView';
+import { ProfileSettingsModal } from './components/auth/ProfileSettingsModal';
 
-export default function App() {
+function AppContent() {
+  const { user, isAuthenticated, updateProfile } = useAuth();
   const [activeScreen, setActiveScreen] = useState<ScreenId>('dashboard');
   const [userProfile, setUserProfile] = useState<UserProfile>(initialUserProfile);
   const [mealSlots, setMealSlots] = useState<MealSlot[]>(initialMealSlots);
@@ -24,12 +30,34 @@ export default function App() {
   // Modals & Feedback
   const [isWorkoutTimerOpen, setIsWorkoutTimerOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
   const [quickAddSlot, setQuickAddSlot] = useState<string>('lunch');
   const [globalToast, setGlobalToast] = useState<string | null>(null);
 
+  // Synchronize authenticated user profile from MongoDB Atlas
+  useEffect(() => {
+    if (user) {
+      setUserProfile((prev) => ({
+        ...prev,
+        name: user.profile?.displayName || user.email.split('@')[0],
+        heightCm: user.profile?.heightCm || prev.heightCm,
+        weightKg: user.profile?.weightKg || prev.weightKg,
+        gender: user.profile?.sex === 'male' ? 'Male' : user.profile?.sex === 'female' ? 'Female' : 'Other',
+        activityLevel: user.profile?.activityLevel || prev.activityLevel,
+        goal: user.profile?.goal || prev.goal,
+        dietPreference:
+          user.preferences?.dietaryPreference === 'vegan'
+            ? 'Vegetarian'
+            : user.preferences?.dietaryPreference === 'omnivore'
+            ? 'Non-Vegetarian'
+            : 'Vegetarian',
+      }));
+    }
+  }, [user]);
+
   const showToast = (msg: string) => {
     setGlobalToast(msg);
-    setTimeout(() => setGlobalToast(null), 3000);
+    setTimeout(() => setGlobalToast(null), 3500);
   };
 
   // Water Quick Log
@@ -73,21 +101,37 @@ export default function App() {
         return slot;
       })
     );
-    showToast('Removed item from meal log.');
+    showToast('Item removed from meal log.');
   };
 
-  // Update Weight and Height from BMI View
-  const handleUpdateWeight = (newWeight: number, newHeight: number) => {
+  // Update Weight and Height (synchronized with backend if authenticated)
+  const handleUpdateWeight = async (newWeightKg: number, newHeightCm?: number) => {
     setUserProfile((prev) => ({
       ...prev,
-      weightKg: newWeight,
-      heightCm: newHeight,
+      weightKg: newWeightKg,
+      heightCm: newHeightCm || prev.heightCm,
     }));
+
+    if (isAuthenticated) {
+      await updateProfile({
+        weightKg: newWeightKg,
+        ...(newHeightCm ? { heightCm: newHeightCm } : {}),
+      });
+    }
+    showToast(`Weight updated to ${newWeightKg} kg! Metrics recalibrated.`);
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface text-on-surface antialiased font-sans">
-      {/* Top Navigation */}
+    <div className="min-h-screen bg-surface flex flex-col font-sans text-on-surface antialiased selection:bg-primary/20">
+      {/* Global Notification Toast */}
+      {globalToast && (
+        <div className="fixed top-20 right-4 z-50 animate-bounce bg-inverse-surface text-inverse-on-surface px-4 py-2.5 rounded-2xl shadow-xl text-xs font-semibold flex items-center space-x-2 border border-outline/20">
+          <span className="material-symbols-outlined text-sm text-primary-fixed">check_circle</span>
+          <span>{globalToast}</span>
+        </div>
+      )}
+
+      {/* Global Navigation Header */}
       <Navigation
         activeScreen={activeScreen}
         onNavigate={(screen) => {
@@ -100,18 +144,40 @@ export default function App() {
           setActiveScreen('ai-food-scanner');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
+        onOpenProfileSettings={() => setIsProfileSettingsOpen(true)}
       />
 
-      {/* Global Toast Alert */}
-      {globalToast && (
-        <div className="fixed bottom-6 right-6 z-50 p-3.5 rounded-xl bg-on-surface text-white text-xs sm:text-sm font-semibold shadow-2xl flex items-center space-x-2 border border-outline-variant/30 animate-fade-in">
-          <span className="material-symbols-outlined text-primary-fixed text-[20px]">check_circle</span>
-          <span>{globalToast}</span>
-        </div>
-      )}
+      {/* Main View Router */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Auth Screens */}
+        {activeScreen === 'auth-register' && (
+          <RegisterView
+            onNavigate={(screen) => {
+              setActiveScreen(screen);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
 
-      {/* Main Content View Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+        {activeScreen === 'auth-login' && (
+          <LoginView
+            onNavigate={(screen) => {
+              setActiveScreen(screen);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {activeScreen === 'onboarding' && (
+          <OnboardingView
+            onNavigate={(screen) => {
+              setActiveScreen(screen);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {/* Feature Screens */}
         {activeScreen === 'dashboard' && (
           <DashboardView
             userProfile={userProfile}
@@ -120,24 +186,23 @@ export default function App() {
               setActiveScreen(screen);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            onLogWater={handleQuickLogWater}
-            onOpenQuickAdd={(slotId) => {
-              setQuickAddSlot(slotId || 'lunch');
+            onQuickAddMeal={(slotId) => {
+              setQuickAddSlot(slotId);
               setIsQuickAddOpen(true);
             }}
-            onStartWorkout={() => setIsWorkoutTimerOpen(true)}
+            onQuickLogWater={handleQuickLogWater}
           />
         )}
 
         {activeScreen === 'nutrition-and-calorie-tracking' && (
           <NutritionLogView
-            userProfile={userProfile}
             mealSlots={mealSlots}
+            userProfile={userProfile}
             onAddFoodItem={handleAddFoodItem}
             onRemoveFoodItem={handleRemoveFoodItem}
-            onNavigate={(screen) => {
-              setActiveScreen(screen);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+            onOpenQuickAdd={(slotId) => {
+              setQuickAddSlot(slotId);
+              setIsQuickAddOpen(true);
             }}
           />
         )}
@@ -184,6 +249,15 @@ export default function App() {
       </main>
 
       {/* Interactive Modals */}
+      <ProfileSettingsModal
+        isOpen={isProfileSettingsOpen}
+        onClose={() => setIsProfileSettingsOpen(false)}
+        onLoggedOut={() => {
+          showToast('Signed out successfully.');
+          setActiveScreen('dashboard');
+        }}
+      />
+
       <WorkoutTimerModal
         isOpen={isWorkoutTimerOpen}
         onClose={() => setIsWorkoutTimerOpen(false)}
@@ -198,7 +272,7 @@ export default function App() {
         defaultSlotId={quickAddSlot}
         onClose={() => setIsQuickAddOpen(false)}
         onAddFood={(slotId, item) => {
-          handleAddFoodItem(slotId, item);
+          handleAddFoodItem(slotId as any, item);
           showToast(`Added ${item.name} (${item.calories} kcal) to ${slotId}!`);
         }}
       />
@@ -233,6 +307,11 @@ export default function App() {
             <button onClick={() => setActiveScreen('bmi-and-body-health')} className="hover:text-primary transition-colors">
               BMI & Health
             </button>
+            {!isAuthenticated && (
+              <button onClick={() => setActiveScreen('auth-login')} className="font-semibold text-primary hover:underline">
+                Sign In / Register
+              </button>
+            )}
           </div>
 
           <div className="text-[11px] text-outline">
@@ -241,5 +320,13 @@ export default function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

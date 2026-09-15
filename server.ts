@@ -8,6 +8,11 @@ import { connectDatabase } from './server/src/config/db';
 import { errorHandler } from './server/src/middleware/errorHandler';
 import { requestIdMiddleware } from './server/src/middleware/requestId';
 import { healthRouter } from './server/src/routes/health';
+import { authRouter } from './server/src/routes/auth';
+import { usersRouter } from './server/src/routes/users';
+import { bmiRouter } from './server/src/routes/bmi';
+import { foodsRouter } from './server/src/routes/foods';
+import { calorieLogsRouter } from './server/src/routes/calorieLogs';
 
 dotenv.config();
 
@@ -27,8 +32,13 @@ async function startServer() {
 
   // Primary REST API routes
   app.use('/api/v1/health', healthRouter);
+  app.use('/api/v1/auth', authRouter);
+  app.use('/api/v1/users', usersRouter);
+  app.use('/api/v1/bmi', bmiRouter);
+  app.use('/api/v1/foods', foodsRouter);
+  app.use('/api/v1/calorie-logs', calorieLogsRouter);
 
-  // Centralized Error Handling
+  // Centralized Error Handling for API routes
   app.use(errorHandler);
 
   // Vite middleware for development
@@ -46,8 +56,10 @@ async function startServer() {
     });
   }
 
+  const clientUrl = process.env.CLIENT_URL || `http://localhost:${PORT}`;
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`NutriPulse server running on http://localhost:${PORT}`);
+    console.log(`NutriPulse backend server running on: http://localhost:${PORT}`);
+    console.log(`Client URL configured for frontend: ${clientUrl}`);
   });
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScreenId, UserProfile } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 interface NavigationProps {
   activeScreen: ScreenId;
@@ -7,6 +8,7 @@ interface NavigationProps {
   userProfile: UserProfile;
   onQuickLogWater: () => void;
   onOpenQuickScan: () => void;
+  onOpenProfileSettings: () => void;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({
@@ -15,7 +17,10 @@ export const Navigation: React.FC<NavigationProps> = ({
   userProfile,
   onQuickLogWater,
   onOpenQuickScan,
+  onOpenProfileSettings,
 }) => {
+  const { user, isAuthenticated } = useAuth();
+
   const navItems: { id: ScreenId; label: string; icon: string }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
     { id: 'nutrition-and-calorie-tracking', label: 'Nutrition Log', icon: 'restaurant' },
@@ -24,6 +29,9 @@ export const Navigation: React.FC<NavigationProps> = ({
     { id: 'ai-food-scanner', label: 'AI Scanner', icon: 'document_scanner' },
     { id: 'bmi-and-body-health', label: 'BMI & Body Health', icon: 'monitor_weight' },
   ];
+
+  const displayName = user?.profile?.displayName || userProfile.name;
+  const initialLetter = (displayName ? displayName.charAt(0) : 'U').toUpperCase();
 
   return (
     <header className="sticky top-0 z-40 bg-surface/95 backdrop-blur-md border-b border-outline-variant/30">
@@ -75,7 +83,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             })}
           </nav>
 
-          {/* Right Action Quick Controls */}
+          {/* Right Action Quick Controls & Auth Badge */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             {/* Quick Hydration */}
             <button
@@ -98,19 +106,40 @@ export const Navigation: React.FC<NavigationProps> = ({
               <span className="sm:hidden">Scan</span>
             </button>
 
-            {/* Profile Avatar Pill */}
-            <button
-              onClick={() => onNavigate('bmi-and-body-health')}
-              title="View Profile & BMI"
-              className="flex items-center space-x-2 pl-2 pr-2.5 py-1 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors"
-            >
-              <div className="w-7 h-7 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs">
-                {userProfile.name.charAt(0)}
+            {/* Authentication States */}
+            {isAuthenticated ? (
+              <button
+                id="header-auth-user-btn"
+                onClick={onOpenProfileSettings}
+                title="Account Settings & Biometrics"
+                className="flex items-center space-x-2 pl-2 pr-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors border border-outline-variant/30"
+              >
+                <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  {initialLetter}
+                </div>
+                <span className="text-xs font-semibold text-on-surface hidden sm:inline max-w-[100px] truncate">
+                  {displayName}
+                </span>
+                <span className="material-symbols-outlined text-sm text-on-surface-variant">settings</span>
+              </button>
+            ) : (
+              <div className="flex items-center space-x-1.5">
+                <button
+                  id="header-nav-login-btn"
+                  onClick={() => onNavigate('auth-login')}
+                  className="px-3 py-1.5 rounded-xl text-xs font-semibold text-primary hover:bg-primary/10 transition"
+                >
+                  Sign In
+                </button>
+                <button
+                  id="header-nav-register-btn"
+                  onClick={() => onNavigate('auth-register')}
+                  className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition border border-outline-variant/40"
+                >
+                  Register
+                </button>
               </div>
-              <span className="text-xs font-semibold text-on-surface hidden lg:inline max-w-[90px] truncate">
-                {userProfile.name.split(' ')[0]}
-              </span>
-            </button>
+            )}
           </div>
         </div>
 

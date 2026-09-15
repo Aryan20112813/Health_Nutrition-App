@@ -4,7 +4,37 @@ export type ScreenId =
   | 'personalized-diet-plan'
   | 'exercise-recommendation'
   | 'ai-food-scanner'
-  | 'bmi-and-body-health';
+  | 'bmi-and-body-health'
+  | 'auth-login'
+  | 'auth-register'
+  | 'onboarding'
+  | 'profile-settings';
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  status: 'active' | 'disabled';
+  profile: {
+    displayName: string;
+    dateOfBirth?: string;
+    sex: 'female' | 'male' | 'other' | 'prefer_not_to_say';
+    heightCm: number;
+    weightKg: number;
+    goal: 'maintain' | 'lose_weight' | 'gain_weight' | 'improve_fitness';
+    activityLevel: 'sedentary' | 'light' | 'moderate' | 'high';
+    fitnessLevel: 'beginner' | 'intermediate' | 'advanced';
+  };
+  preferences: {
+    dietaryPreference: 'omnivore' | 'vegetarian' | 'vegan' | 'other';
+    restrictions: string[];
+    excludedFoods: string[];
+    equipment: string[];
+    workoutDurationMin: number;
+    mealsPerDay: number;
+  };
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 export interface FoodItem {
   id: string;
@@ -92,6 +122,28 @@ export interface BmiHistoryRecord {
   status: string;
 }
 
+export interface BmiApiRecord {
+  id: string;
+  heightCm: number;
+  weightKg: number;
+  bmi: number;
+  category: 'underweight' | 'normal' | 'overweight' | 'obesity';
+  categoryLabel: string;
+  idealWeightRange: {
+    minKg: number;
+    maxKg: number;
+  };
+  recordedAt: string;
+  createdAt: string;
+}
+
+export interface BmiPagination {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface DetectedSegment {
   id: string;
   label: string;
@@ -105,3 +157,66 @@ export interface DetectedSegment {
   rect: { x: number; y: number; width: number; height: number };
   color: string;
 }
+
+export interface ICatalogFood {
+  id: string;
+  name: string;
+  category: string;
+  serving: {
+    amount: number;
+    unit: 'g' | 'ml' | 'piece' | 'serving';
+  };
+  nutritionPerServing: {
+    calories: number;
+    proteinG: number;
+    carbsG: number;
+    fatG: number;
+    fiberG: number | null;
+  };
+  alternativeUnits: Array<{
+    unit: 'g' | 'ml' | 'piece' | 'serving';
+    gramsEquivalent: number;
+  }>;
+  tags: string[];
+  dietaryTags: string[];
+}
+
+export interface ICalorieLogItem {
+  id: string;
+  date: string;
+  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  foodId: string | null;
+  foodNameSnapshot: string;
+  quantity: number;
+  unit: 'g' | 'ml' | 'piece' | 'serving';
+  nutrition: {
+    calories: number;
+    proteinG: number;
+    carbsG: number;
+    fatG: number;
+    fiberG: number | null;
+  };
+  source: 'catalog' | 'manual' | 'food_recognition';
+  createdAt: string;
+}
+
+export interface IDayLogSummary {
+  date: string;
+  targetCalories: number;
+  consumedCalories: number;
+  remainingCalories: number;
+  macroTotals: {
+    proteinG: number;
+    carbsG: number;
+    fatG: number;
+    fiberG: number;
+  };
+  mealBreakdown: Record<
+    'breakfast' | 'lunch' | 'dinner' | 'snack',
+    {
+      calories: number;
+      itemCount: number;
+    }
+  >;
+}
+

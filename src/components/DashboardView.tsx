@@ -231,39 +231,65 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Card 3: Body Metrics & BMI */}
-        <div
-          onClick={() => onNavigate('bmi-and-body-health')}
-          className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 flex flex-col justify-between shadow-xs hover:border-primary/50 cursor-pointer transition-all group"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-              Body Health & BMI
-            </span>
-            <span className="material-symbols-outlined text-primary text-[20px] group-hover:translate-x-0.5 transition-transform">
-              monitor_weight
-            </span>
-          </div>
+        {(() => {
+          const hM = (userProfile.heightCm || 175) / 100;
+          const wKg = userProfile.weightKg || 70;
+          const dynamicBmi = hM > 0 ? parseFloat((wKg / (hM * hM)).toFixed(1)) : 21.5;
+          const minW = parseFloat((18.5 * hM * hM).toFixed(1));
+          const maxW = parseFloat((24.9 * hM * hM).toFixed(1));
 
-          <div className="my-2">
-            <div className="flex items-baseline space-x-2">
-              <span className="text-2xl sm:text-3xl font-extrabold text-on-surface">21.5</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed">
-                Healthy Range
-              </span>
-            </div>
-            <p className="text-xs text-on-surface-variant mt-1">
-              Height: {userProfile.heightCm} cm • Current: {userProfile.weightKg} kg
-            </p>
-            <div className="mt-2 text-xs text-on-surface-variant bg-surface-container-low p-2 rounded-lg">
-              Optimal weight: <span className="font-bold text-on-surface">56.7 – 76.3 kg</span>
-            </div>
-          </div>
+          let catLabel = 'Normal weight';
+          let badgeClass = 'bg-primary-fixed text-on-primary-fixed';
+          if (dynamicBmi < 18.5) {
+            catLabel = 'Underweight';
+            badgeClass = 'bg-blue-100 text-blue-800';
+          } else if (dynamicBmi < 25.0) {
+            catLabel = 'Normal weight';
+            badgeClass = 'bg-emerald-100 text-emerald-800';
+          } else if (dynamicBmi < 30.0) {
+            catLabel = 'Overweight';
+            badgeClass = 'bg-amber-100 text-amber-800';
+          } else {
+            catLabel = 'Obese';
+            badgeClass = 'bg-rose-100 text-rose-800';
+          }
 
-          <div className="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-xs text-primary font-semibold">
-            <span>Screening & History</span>
-            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-          </div>
-        </div>
+          return (
+            <div
+              onClick={() => onNavigate('bmi-and-body-health')}
+              className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 flex flex-col justify-between shadow-xs hover:border-primary/50 cursor-pointer transition-all group"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                  Body Health & BMI
+                </span>
+                <span className="material-symbols-outlined text-primary text-[20px] group-hover:translate-x-0.5 transition-transform">
+                  monitor_weight
+                </span>
+              </div>
+
+              <div className="my-2">
+                <div className="flex items-baseline space-x-2">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-on-surface font-mono">{dynamicBmi}</span>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${badgeClass}`}>
+                    {catLabel}
+                  </span>
+                </div>
+                <p className="text-xs text-on-surface-variant mt-1 font-mono">
+                  Height: {userProfile.heightCm} cm • Current: {userProfile.weightKg} kg
+                </p>
+                <div className="mt-2 text-xs text-on-surface-variant bg-surface-container-low p-2 rounded-lg">
+                  Healthy interval: <span className="font-bold text-on-surface font-mono">{minW} – {maxW} kg</span>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-xs text-primary font-semibold">
+                <span>Screening & History</span>
+                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Card 4: Daily Habits & Telemetry */}
         <div className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 flex flex-col justify-between shadow-xs">

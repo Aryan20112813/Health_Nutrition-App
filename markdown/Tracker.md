@@ -5,9 +5,9 @@
 
 ## Overall Progress
 
-- [ ] Phase 0 — Foundation
-- [ ] Phase 1 — Authentication & User Profile
-- [ ] Phase 2 — BMI
+- [x] Phase 0 — Foundation
+- [x] Phase 1 — Authentication & User Profile
+- [x] Phase 2 — BMI
 - [ ] Phase 3 — Calorie Tracking
 - [ ] Phase 4 — Personalized Diet Plan
 - [ ] Phase 5 — Exercise Recommendation
@@ -17,10 +17,10 @@
 
 ## Current Phase
 
-**Phase:** 0 — Foundation  
-**Status:** In Progress (Awaiting MongoDB Connection String / Credentials)  
-**Active work item:** MongoDB Atlas connectivity & Phase 1 Authentication  
-**Last verified:** Phase 0 foundation, Express server, health API verified
+**Phase:** 2 — BMI  
+**Status:** Completed  
+**Active work item:** Phase 2 complete & verified; ready for Phase 3 (Calorie Tracking)  
+**Last verified:** Full vitest suite (12 tests) passed: calculation unit tests, cross-user isolation, pagination, validation, and profile sync against MongoDB Atlas
 
 ## Phase Tasks
 
@@ -32,7 +32,7 @@
 - [x] Create `/api/v1/health`
 - [x] Configure environment loading
 - [x] Add `.env.example`
-- [ ] Connect MongoDB (Awaiting MONGODB_URI)
+- [x] Connect MongoDB (Connected to MongoDB Atlas)
 - [x] Add centralized error-handling middleware
 - [x] Add request ID middleware
 - [x] Verify frontend/backend communication
@@ -40,30 +40,30 @@
 
 ### Phase 1 — Authentication & User Profile
 
-- [ ] Implement FR-AUTH-001 registration
-- [ ] Implement FR-AUTH-002 login
-- [ ] Implement FR-AUTH-003 logout
-- [ ] Implement FR-AUTH-004 protected routes
-- [ ] Implement FR-AUTH-005 password change
-- [ ] Implement FR-AUTH-006 refresh-token rotation
-- [ ] Add `users` model
-- [ ] Add `sessions` model
-- [ ] Implement onboarding UI (`SCR-ONB-001`)
-- [ ] Implement profile API/UI (`SCR-PROFILE-001`)
-- [ ] Add auth unit/API/integration tests
-- [ ] Verify secrets are not exposed to client
+- [x] Implement FR-AUTH-001 registration
+- [x] Implement FR-AUTH-002 login
+- [x] Implement FR-AUTH-003 logout
+- [x] Implement FR-AUTH-004 protected routes
+- [x] Implement FR-AUTH-005 password change
+- [x] Implement FR-AUTH-006 refresh-token rotation
+- [x] Add `users` model
+- [x] Add `sessions` model
+- [x] Implement onboarding UI (`SCR-ONB-001`)
+- [x] Implement profile API/UI (`SCR-PROFILE-001`)
+- [x] Add auth unit/API/integration tests
+- [x] Verify secrets are not exposed to client
 
 ### Phase 2 — BMI
 
-- [ ] Implement FR-BMI-001 input validation
-- [ ] Implement FR-BMI-002 BMI calculation
-- [ ] Implement FR-BMI-003 result/category UI
-- [ ] Implement FR-BMI-004 history
-- [ ] Add `bmiRecords` model/index
-- [ ] Add BMI API tests
-- [ ] Add BMI calculation unit tests
-- [ ] Add protected ownership tests
-- [ ] Verify regression suite
+- [x] Implement FR-BMI-001 input validation
+- [x] Implement FR-BMI-002 BMI calculation
+- [x] Implement FR-BMI-003 result/category UI
+- [x] Implement FR-BMI-004 history
+- [x] Add `bmiRecords` model/index
+- [x] Add BMI API tests
+- [x] Add BMI calculation unit tests
+- [x] Add protected ownership tests
+- [x] Verify regression suite
 
 ### Phase 3 — Calorie Tracking
 
