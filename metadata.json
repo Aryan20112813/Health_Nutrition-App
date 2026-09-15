@@ -1,0 +1,6 @@
+{
+  "name": "NutriPulse - Metabolic Health OS",
+  "description": "Evidence-based Indian culinary nutrition and metabolic health operating system featuring AI food recognition, calibrated macro tracking, personalized meal planning, and biometrics.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
