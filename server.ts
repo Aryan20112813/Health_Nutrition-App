@@ -13,6 +13,7 @@ import { usersRouter } from './server/src/routes/users';
 import { bmiRouter } from './server/src/routes/bmi';
 import { foodsRouter } from './server/src/routes/foods';
 import { calorieLogsRouter } from './server/src/routes/calorieLogs';
+import { dietPlansRouter } from './server/src/routes/dietPlans';
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ async function startServer() {
   app.use('/api/v1/bmi', bmiRouter);
   app.use('/api/v1/foods', foodsRouter);
   app.use('/api/v1/calorie-logs', calorieLogsRouter);
+  app.use('/api/v1/diet-plans', dietPlansRouter);
 
   // Centralized Error Handling for API routes
   app.use(errorHandler);

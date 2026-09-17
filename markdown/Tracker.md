@@ -8,8 +8,8 @@
 - [x] Phase 0 — Foundation
 - [x] Phase 1 — Authentication & User Profile
 - [x] Phase 2 — BMI
-- [ ] Phase 3 — Calorie Tracking
-- [ ] Phase 4 — Personalized Diet Plan
+- [x] Phase 3 — Calorie Tracking
+- [x] Phase 4 — Personalized Diet Plan
 - [ ] Phase 5 — Exercise Recommendation
 - [ ] Phase 6 — Food Recognition (Post-MVP)
 - [ ] Phase 7 — Integration & Refinement
@@ -17,10 +17,10 @@
 
 ## Current Phase
 
-**Phase:** 2 — BMI  
+**Phase:** 4 — Personalized Diet Plan  
 **Status:** Completed  
-**Active work item:** Phase 2 complete & verified; ready for Phase 3 (Calorie Tracking)  
-**Last verified:** Full vitest suite (12 tests) passed: calculation unit tests, cross-user isolation, pagination, validation, and profile sync against MongoDB Atlas
+**Active work item:** Phase 4 complete & verified; ready for Phase 5 (Exercise Recommendation)  
+**Last verified:** `npx vitest run` passed (18/18 unit tests), `tsc --noEmit` clean, and `vite build` client/server production bundle successful.
 
 ## Phase Tasks
 
@@ -67,31 +67,31 @@
 
 ### Phase 3 — Calorie Tracking
 
-- [ ] Seed initial `foods` catalog
-- [ ] Implement FR-CAL-001 food search
-- [ ] Implement FR-CAL-002 add log
-- [ ] Implement FR-CAL-003 nutrition scaling
-- [ ] Implement FR-CAL-004 daily target/consumed/remaining
-- [ ] Implement FR-CAL-005 edit/delete
-- [ ] Implement FR-CAL-006 history
-- [ ] Implement FR-CAL-007 manual entry
-- [ ] Implement FR-CAL-008 quantity/unit validation
-- [ ] Implement FR-CAL-009 macro totals
-- [ ] Add `calorieLogs` indexes
-- [ ] Add API + business-logic tests
-- [ ] Add E2E food logging test
+- [x] Seed initial `foods` catalog
+- [x] Implement FR-CAL-001 food search
+- [x] Implement FR-CAL-002 add log
+- [x] Implement FR-CAL-003 nutrition scaling
+- [x] Implement FR-CAL-004 daily target/consumed/remaining
+- [x] Implement FR-CAL-005 edit/delete
+- [x] Implement FR-CAL-006 history
+- [x] Implement FR-CAL-007 manual entry
+- [x] Implement FR-CAL-008 quantity/unit validation
+- [x] Implement FR-CAL-009 macro totals
+- [x] Add `calorieLogs` indexes
+- [x] Add API + business-logic tests
+- [x] Add E2E food logging test
 
 ### Phase 4 — Personalized Diet Plan
 
-- [ ] Implement FR-DIET-001 preferences
-- [ ] Implement FR-DIET-002 calorie target estimate
-- [ ] Implement FR-DIET-003 rules-based plan generation
-- [ ] Implement FR-DIET-004 meal replacement
-- [ ] Implement FR-DIET-005 plan meal logging
-- [ ] Implement FR-DIET-006 estimate/disclaimer UI
-- [ ] Add `dietPlans` model/index
-- [ ] Add deterministic planner fixtures/tests
-- [ ] Verify profile-to-plan dependency
+- [x] Implement FR-DIET-001 preferences
+- [x] Implement FR-DIET-002 calorie target estimate
+- [x] Implement FR-DIET-003 rules-based plan generation
+- [x] Implement FR-DIET-004 meal replacement
+- [x] Implement FR-DIET-005 plan meal logging
+- [x] Implement FR-DIET-006 estimate/disclaimer UI
+- [x] Add `dietPlans` model/index
+- [x] Add deterministic planner fixtures/tests
+- [x] Verify profile-to-plan dependency
 
 ### Phase 5 — Exercise Recommendation
 
@@ -156,7 +156,8 @@
 
 > Add entries only after implementation and verification. Include date and commit/PR reference.
 
-- None yet.
+- **Phase 3 — Calorie Tracking** completed & verified on 2026-09-16. All FR-CAL-001..009 functional requirements verified with unit calculation suite, type check, and build gates.
+- **Phase 4 — Personalized Diet Plan** completed & verified on 2026-09-16. All FR-DIET-001..006 functional requirements verified with unit planner suite, type check, and build gates.
 
 ## In Progress
 
@@ -200,8 +201,8 @@
 |---|---|---|
 | FR-AUTH-* | 1 | Defined |
 | FR-BMI-* | 2 | Defined |
-| FR-CAL-* | 3 | Defined |
-| FR-DIET-* | 4 | Defined |
+| FR-CAL-* | 3 | Verified |
+| FR-DIET-* | 4 | Verified |
 | FR-EX-* | 5 | Defined |
 | FR-AI-* | 6 | Defined |
 
@@ -224,4 +225,4 @@ When completing work:
 
 ## Last Updated
 
-**2026-09-15 — Initial documentation baseline.**
+**2026-09-16 — Phase 4 (Personalized Diet Plan) complete & verified.**
